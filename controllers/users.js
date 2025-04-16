@@ -1,5 +1,5 @@
-const User = require('../models/user');
-const { OK, CREATED, BAD_REQUEST, NOT_FOUND } = require('../utils/errors');
+const User = require('../models/user.js');
+const { OK, CREATED, BAD_REQUEST, NOT_FOUND } = require('../utils/errors.js');
 
 
 const getUsers = (req, res) => {
@@ -24,6 +24,7 @@ const createUser = (req, res) => {
       if (err.name === "ValidationError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
       }
+      return res.status(NOT_FOUND).send({ message: err.message });
     });
 }
 
@@ -35,12 +36,14 @@ const getUser = (req, res) => {
       if (!user) {
         return res.status(NOT_FOUND).send({ message: err.message });
       }
+      return res.status(OK).send(user);
     })
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
       }
+      return res.status(NOT_FOUND).send({ message: err.message });
     });
 }
 

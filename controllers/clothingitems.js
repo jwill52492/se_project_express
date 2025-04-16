@@ -1,5 +1,5 @@
-const ClothingItems = require('../models/clothingitems');
-const { INTERNAL_SERVER_ERROR, OK, CREATED, BAD_REQUEST } = require('../utils/errors');
+const ClothingItems = require('../models/clothingitems.js');
+const { INTERNAL_SERVER_ERROR, OK, CREATED, BAD_REQUEST } = require('../utils/errors.js');
 
 
 const getClothingItems = (req, res) => {
@@ -24,6 +24,7 @@ const createClothingItems = (req, res) => {
       if (err.name === "ValidationError") {
         return res.status(CREATED).send({ message: err.message });
       }
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
     });
 }
 
@@ -35,6 +36,7 @@ const deleteClothingItems = (req, res) => {
       if (!item) {
         return res.status(NOT_FOUND).send({ message: err.message });
       }
+      return res.status(OK).send({ message: err.message });
     })
     .catch((err) => {
       console.error(err);
@@ -54,6 +56,7 @@ const likeClothingItems = (req, res) => {
       if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
       }
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
     });
 }
 
@@ -69,6 +72,7 @@ const dislikeClothingItems = (req, res) => {
       if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
       }
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
     });
 }
 
