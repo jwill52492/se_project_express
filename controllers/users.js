@@ -22,8 +22,6 @@ const createUser = (req, res) => {
       console.error(err);
       if (err.name === "ValidationError") {
         return res.status().send({ message: err.message });
-      } else {
-        return res.status().send({ message: err.message });
       }
     });
 }
@@ -35,8 +33,6 @@ const getUser = (req, res) => {
     .then((user) => {
       if (!user) {
         return res.status().send({ message: err.message });
-      } else {
-        return res.status().send(user);
       }
     })
     .catch((err) => {

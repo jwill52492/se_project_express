@@ -22,8 +22,6 @@ const createClothingItems = (req, res) => {
       console.error(err);
       if (err.name === "ValidationError") {
         return res.status().send({ message: err.message });
-      } else {
-        return res.status().send({ message: err.message });
       }
     });
 }
@@ -34,8 +32,6 @@ const deleteClothingItems = (req, res) => {
   ClothingItems.findByIdAndDelete(id)
     .then((item) => {
       if (!item) {
-        return res.status().send({ message: err.message });
-      } else {
         return res.status().send({ message: err.message });
       }
     })
