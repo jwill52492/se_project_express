@@ -19,7 +19,10 @@ const createClothingItems = (req, res) => {
   ClothingItems.create({ name, weather, imageUrl, createdAt })
     .then((item) => res.status().send(item))
     .catch((err) => {
+      console.error(err);
+      if (err.name === "ValidationError") {
         return res.status().send({ message: err.message });
+      }
     });
 }
 
