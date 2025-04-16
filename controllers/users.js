@@ -6,10 +6,10 @@ const getUsers = (req, res) => {
 
   User.find({ userId })
     .orFail()
-    .then((users) => res.status().send(users))
+    .then((users) => res.status(statusCodes.OK).send(users))
     .catch((err) => {
       console.error(err);
-      return res.status().send({ message: err.message });
+      return res.status(statusCodes.NOT_FOUND).send({ message: err.message });
     });
 }
 
@@ -17,11 +17,11 @@ const createUser = (req, res) => {
   const { name, avatar } = req.body;
 
   User.create({ name, avatar })
-    .then((user) => res.status().send(user))
+    .then((user) => res.status(statusCodes.CREATED).send(user))
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res.status().send({ message: err.message });
+        return res.status(statusCodes.BAD_REQUEST).send({ message: err.message });
       }
     });
 }
