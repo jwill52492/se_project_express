@@ -1,15 +1,16 @@
 const User = require('../models/user');
-const err = require('../utils/errors').default;
+const { CREATED, BAD_REQUEST, NOT_FOUND } = require('../utils/errors');
+
 
 const getUsers = (req, res) => {
   const { userId } = req.params;
 
   User.find({ userId })
     .orFail()
-    .then((users) => res.status(statusCodes.OK).send(users))
+    .then((users) => res.status(OK).send(users))
     .catch((err) => {
       console.error(err);
-      return res.status(statusCodes.NOT_FOUND).send({ message: err.message });
+      return res.status(NOT_FOUND).send({ message: err.message });
     });
 }
 
@@ -17,11 +18,11 @@ const createUser = (req, res) => {
   const { name, avatar } = req.body;
 
   User.create({ name, avatar })
-    .then((user) => res.status(statusCodes.CREATED).send(user))
+    .then((user) => res.status(CREATED).send(user))
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res.status(statusCodes.BAD_REQUEST).send({ message: err.message });
+        return res.status(BAD_REQUEST).send({ message: err.message });
       }
     });
 }
@@ -32,15 +33,14 @@ const getUser = (req, res) => {
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        return res.status().send({ message: err.message });
+        return res.status(NOT_FOUND).send({ message: err.message });
       }
     })
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
-        return res.status().send({ message: err.message });
+        return res.status(BAD_REQUEST).send({ message: err.message });
       }
-      return res.status().send({ message: err.message });
     });
 }
 

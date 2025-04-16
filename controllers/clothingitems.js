@@ -1,15 +1,16 @@
 const ClothingItems = require('../models/clothingitems');
-const err = require('../utils/errors').default;
+const { INTERNAL_SERVER_ERROR, OK, CREATED, BAD_REQUEST } = require('../utils/errors');
+
 
 const getClothingItems = (req, res) => {
   const { id } = req.params;
 
   ClothingItems.findById({ id })
     .orFail()
-    .then((items) => res.status(statusCodes.OK).send(items))
+    .then((items) => res.status(OK).send(items))
     .catch((err) => {
       console.error(err);
-      return res.status(statusCodes.INTERNAL_SERVER_ERROR).send({ message: err.message });
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
     });
 }
 
@@ -17,11 +18,11 @@ const createClothingItems = (req, res) => {
   const { name, weather, imageUrl, createdAt } = req.body;
 
   ClothingItems.create({ name, weather, imageUrl, createdAt })
-    .then((item) => res.status().send(item))
+    .then((item) => res.status(CREATED).send(item))
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res.status().send({ message: err.message });
+        return res.status(CREATED).send({ message: err.message });
       }
     });
 }
@@ -32,12 +33,12 @@ const deleteClothingItems = (req, res) => {
   ClothingItems.findByIdAndDelete(id)
     .then((item) => {
       if (!item) {
-        return res.status(statusCodes.NOT_FOUND).send({ message: err.message });
+        return res.status(NOT_FOUND).send({ message: err.message });
       }
     })
     .catch((err) => {
       console.error(err);
-      return res.status(statusCodes.INTERNAL_SERVER_ERROR).send({ message: err.message });
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
     });
 }
 
@@ -47,11 +48,11 @@ const likeClothingItems = (req, res) => {
 
   ClothingItems.findByIdAndUpdate(id, { $addToSet: { likes: userId } }, { new: true })
     .orFail()
-    .then((item) => res.status().send(item))
+    .then((item) => res.status(OK).send(item))
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
-        return res.status(statusCodes.BAD_REQUEST).send({ message: err.message });
+        return res.status(BAD_REQUEST).send({ message: err.message });
       }
     });
 }
@@ -62,11 +63,11 @@ const dislikeClothingItems = (req, res) => {
 
   ClothingItems.findByIdAndUpdate(id, { $pull: { likes: userId } }, { new: true })
     .orFail()
-    .then((item) => res.status().send(item))
+    .then((item) => res.status(OK).send(item))
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
-        return res.status(statusCodes.BAD_REQUEST).send({ message: err.message });
+        return res.status(BAD_REQUEST).send({ message: err.message });
       }
     });
 }
