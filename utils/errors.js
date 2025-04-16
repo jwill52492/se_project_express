@@ -8,4 +8,4 @@ function getStatusCodes() {
   };
 }
 
-module.exports = getStatusCodes
+export default getStatusCodes

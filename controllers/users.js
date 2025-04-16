@@ -1,5 +1,5 @@
 const User = require('../models/user');
-const err = require('../utils/errors');
+const err = require('../utils/errors').default;
 
 const getUsers = (req, res) => {
   const { userId } = req.params;

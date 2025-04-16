@@ -1,5 +1,5 @@
 const ClothingItems = require('../models/clothingitems');
-const err = require('../utils/errors');
+const err = require('../utils/errors').default;
 
 const getClothingItems = (req, res) => {
   const { id } = req.params;
@@ -17,11 +17,11 @@ const createClothingItems = (req, res) => {
   const { name, weather, imageUrl, createdAt } = req.body;
 
   ClothingItems.create({ name, weather, imageUrl, createdAt })
-    .then((item) => res.status(statusCodes.CREATED).send(item))
+    .then((item) => res.status().send(item))
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res.status(statusCodes.CREATED).send({ message: err.message });
+        return res.status().send({ message: err.message });
       }
     });
 }
