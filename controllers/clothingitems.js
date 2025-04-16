@@ -41,4 +41,34 @@ const deleteClothingItems = (req, res) => {
     });
 }
 
-module.exports = { getClothingItems, createClothingItems, deleteClothingItems };
+const likeClothingItems = (req, res) => {
+  const { id } = req.params;
+  const userId = req.user._id;
+
+  ClothingItems.findByIdAndUpdate(id, { $addToSet: { likes: userId } }, { new: true })
+    .orFail()
+    .then((item) => res.status().send(item))
+    .catch((err) => {
+      console.error(err);
+      if (err.name === "CastError") {
+        return res.status().send({ message: err.message });
+      }
+    });
+}
+
+const dislikeClothingItems = (req, res) => {
+  const { id } = req.params;
+  const userId = req.user._id;
+
+  ClothingItems.findByIdAndUpdate(id, { $pull: { likes: userId } }, { new: true })
+    .orFail()
+    .then((item) => res.status().send(item))
+    .catch((err) => {
+      console.error(err);
+      if (err.name === "CastError") {
+        return res.status().send({ message: err.message });
+      }
+    });
+}
+
+module.exports = { getClothingItems, createClothingItems, deleteClothingItems, likeClothingItems, dislikeClothingItems };
