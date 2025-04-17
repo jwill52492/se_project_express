@@ -1,5 +1,5 @@
-const ClothingItems = require('../models/clothingitems.js');
-const { INTERNAL_SERVER_ERROR, OK, CREATED, BAD_REQUEST } = require('../utils/errors.js');
+const ClothingItems = require('../models/clothingitems');
+const { INTERNAL_SERVER_ERROR, OK, CREATED, BAD_REQUEST, NOT_FOUND } = require('../utils/errors');
 
 
 const getClothingItems = (req, res) => {
@@ -10,14 +10,15 @@ const getClothingItems = (req, res) => {
     .then((items) => res.status(OK).send(items))
     .catch((err) => {
       console.error(err);
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: "An error has occurred on the server" });
     });
 }
 
 const createClothingItems = (req, res) => {
-  const { name, weather, imageUrl, createdAt } = req.body;
+  const { name, weather, imageUrl } = req.body;
+  const owner = req.user._id;
 
-  ClothingItems.create({ name, weather, imageUrl, createdAt })
+  ClothingItems.create({ name, weather, imageUrl, owner, createdAt: Date.now() })
     .then((item) => res.status(CREATED).send(item))
     .catch((err) => {
       console.error(err);
@@ -34,12 +35,15 @@ const deleteClothingItems = (req, res) => {
   ClothingItems.findByIdAndDelete(id)
     .then((item) => {
       if (!item) {
-        return res.status(NOT_FOUND).send({ message: err.message });
+        return res.status(NOT_FOUND).send({ message: "Item not found" });
       }
-      return res.status(OK).send({ message: err.message });
+      return res.status(OK).send({ message: "Success" });
     })
     .catch((err) => {
       console.error(err);
+      if (err.name === "CastError") {
+        return res.status(BAD_REQUEST).send({ message: err.message });
+      }
       return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
     });
 }
@@ -53,6 +57,9 @@ const likeClothingItems = (req, res) => {
     .then((item) => res.status(OK).send(item))
     .catch((err) => {
       console.error(err);
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(NOT_FOUND).send({ message: err.message });
+      }
       if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
       }
@@ -69,6 +76,9 @@ const dislikeClothingItems = (req, res) => {
     .then((item) => res.status(OK).send(item))
     .catch((err) => {
       console.error(err);
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(NOT_FOUND).send({ message: err.message });
+      }
       if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
       }

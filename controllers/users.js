@@ -1,5 +1,5 @@
-const User = require('../models/user.js');
-const { OK, CREATED, BAD_REQUEST, NOT_FOUND } = require('../utils/errors.js');
+const User = require('../models/user');
+const { OK, CREATED, BAD_REQUEST, NOT_FOUND, INTERNAL_SERVER_ERROR } = require('../utils/errors');
 
 
 const getUsers = (req, res) => {
@@ -10,7 +10,7 @@ const getUsers = (req, res) => {
     .then((users) => res.status(OK).send(users))
     .catch((err) => {
       console.error(err);
-      return res.status(NOT_FOUND).send({ message: err.message });
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: "An error has occurred on the server" });
     });
 }
 
@@ -24,7 +24,7 @@ const createUser = (req, res) => {
       if (err.name === "ValidationError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
       }
-      return res.status(NOT_FOUND).send({ message: err.message });
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: "An error has occurred on the server" });
     });
 }
 
@@ -34,7 +34,7 @@ const getUser = (req, res) => {
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        return res.status(NOT_FOUND).send({ message: err.message });
+        return res.status(NOT_FOUND).send({ message: "User not found" });
       }
       return res.status(OK).send(user);
     })
@@ -43,7 +43,7 @@ const getUser = (req, res) => {
       if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
       }
-      return res.status(NOT_FOUND).send({ message: err.message });
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: "An error has occurred on the server" });
     });
 }
 
