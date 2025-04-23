@@ -45,6 +45,9 @@ const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
 
   User.create({ name, avatar, email, password })
+    if (!email || !password) {
+      return res.status(BAD_REQUEST).send({ message: "The 'email' and 'password' fields are requried" });
+    }
     bcrypt.hash(password, 10)
     .then(hash => User.create({ name, avatar, email, password: hash }))
     .then((user) => res.status(CREATED).send({ _id: user._id, email: user.email }))
