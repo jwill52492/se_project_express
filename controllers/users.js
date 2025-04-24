@@ -44,20 +44,30 @@ const getUsers = (req, res) => {
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
 
-  User.create({ name, avatar, email, password })
-    bcrypt.hash(password, 10)
-    .then(hash => User.create({ name, avatar, email, password: hash }))
-    .then((user) => res.status(CREATED).send({ _id: user._id, email: user.email }))
+  if (!email || !password) {
+    res.status(BAD_REQUEST).send({ message: "The 'email' and 'password' fields are requried" });
+    return;
+  }
+
+  bcrypt
+    .hash(password, 10)
+    .then((hash) => User.create({ name, avatar, email, password: hash }))
+    .then((user) => {
+      const userObj = user.toObject();
+      delete userObj.password;
+      return res.status(CREATED).send(userObj);
+    })
     .catch((err) => {
       console.error(err);
-      if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
-      }
       if (err.code === 11000) {
         return res.status(CONFLICT).send({ message: "User with this email already exists" });
+      } if (err.name === "ValidationError") {
+        return res.status(BAD_REQUEST).send({ message: err.message });
+      } if (err.code === CONFLICT) {
+        return res.status(CONFLICT).send({ message: err.message });
       }
       return res.status(INTERNAL_SERVER_ERROR).send({ message: "An error has occurred on the server" });
-    });
+  });
 }
 
 const getCurrentUser = (req, res) => {
@@ -82,7 +92,7 @@ const getCurrentUser = (req, res) => {
 const updateUser = (req, res) => {
   const { name, avatar } = req.body;
 
-  User.findByIdAndUpdate(_id, { name, avatar }, { new: true, runValidators: true })
+  User.findByIdAndUpdate({ name, avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         return res.status(NOT_FOUND).send({ message: "User not found" });

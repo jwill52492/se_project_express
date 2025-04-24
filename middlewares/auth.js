@@ -1,28 +1,31 @@
+const jwt = require("jsonwebtoken");
+
 const UNAUTHORIZED = 401;
 
-payload = jwt.verify(token, JWT_SECRET);
+const handleAuthError = (err, res) => {
+  res.status(UNAUTHORIZED).send({ message: "Authorization Error" });
+}
 
+const extractBearerToken = (req) => {
+  const header = req.headers.authorization;
+  return header.replace("Bearer ", "");
+}
 
-const authMiddleware = (req, res, next) => {
-  try {
-    const authorization = req.headers.authorization;
-    if (!authorization || !authorization.startsWith("Bearer ")) {
-      return res.status(UNAUTHORIZED).send({ message: "Authorization required" });
-    }
-
-    const token = authorization.replace("Bearer ", "");
-    const payload = jwt.verify(token, JWT_SECRET);
-
-    req.user = payload;
-    next();
-  } catch (err) {
-    res.status(UNAUTHORIZED).send({ message: "Authorization required" });
+module.exports = (req, res, next) => {
+  const { authorization } = req.headers;
+  if (!authorization || !authorization.startsWith("Bearer ")) {
+    return handleAuthError(res);
   }
-};
 
-app.use((req, res, next) => {
+  const token = extractBearerToken(authorization);
+  let payload;
+
+  try {
+    payload = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (err) {
+    return handleAuthError(err, res);
+  }
+
   req.user = payload;
   next();
-});
-
-module.exports = authMiddleware;
+}
