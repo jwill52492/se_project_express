@@ -6,7 +6,7 @@ const { OK, CREATED, BAD_REQUEST, NOT_FOUND, INTERNAL_SERVER_ERROR, CONFLICT, UN
 
 
 
-const getUsers = (req, res) => {
+const login = (req, res) => {
   const { email, password } = req.body;
 
   User.findUserByCredentials({ email }).select("+password")
@@ -110,4 +110,4 @@ const updateUser = (req, res) => {
     });
 }
 
-module.exports = { getUsers, createUser, getCurrentUser, updateUser };
+module.exports = { login, createUser, getCurrentUser, updateUser };

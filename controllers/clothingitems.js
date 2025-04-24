@@ -1,5 +1,5 @@
 const ClothingItems = require('../models/clothingitems');
-const { INTERNAL_SERVER_ERROR, OK, CREATED, BAD_REQUEST, NOT_FOUND } = require('../utils/errors');
+const { INTERNAL_SERVER_ERROR, OK, CREATED, BAD_REQUEST, NOT_FOUND, FORBIDDEN } = require('../utils/errors');
 
 
 const getClothingItems = (req, res) => {
@@ -27,10 +27,14 @@ const createClothingItems = (req, res) => {
 }
 
 const deleteClothingItems = (req, res) => {
+  const owner = req.user._id;
   const { itemId } = req.params;
 
   ClothingItems.findByIdAndDelete(itemId)
     .then((item) => {
+      if (!owner) {
+        return res.status(FORBIDDEN).send({ message: "You cannot delete this item" });
+      }
       if (!item) {
         return res.status(NOT_FOUND).send({ message: "Item not found" });
       }
