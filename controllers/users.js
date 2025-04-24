@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { JWT_SECRET } = require('../utils/config');
 const User = require('../models/user');
 const { OK, CREATED, BAD_REQUEST, NOT_FOUND, INTERNAL_SERVER_ERROR, CONFLICT, UNAUTHORIZED } = require('../utils/errors');
 
@@ -39,6 +40,10 @@ const getUsers = (req, res) => {
       }
       return res.status(INTERNAL_SERVER_ERROR).send({ message: "An error has occurred on the server" });
     });
+}
+
+const login = (req, res) => {
+
 }
 
 const createUser = (req, res) => {

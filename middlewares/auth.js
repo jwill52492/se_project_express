@@ -1,31 +1,24 @@
 const jwt = require("jsonwebtoken");
+const { JWT_SECRET} = require("../utils/config");
 
 const UNAUTHORIZED = 401;
 
-const handleAuthError = (err, res) => {
-  res.status(UNAUTHORIZED).send({ message: "Authorization Error" });
-}
-
-const extractBearerToken = (req) => {
-  const header = req.headers.authorization;
-  return header.replace("Bearer ", "");
-}
-
-module.exports = (req, res, next) => {
-  const { authorization } = req.headers;
-  if (!authorization || !authorization.startsWith("Bearer ")) {
-    return handleAuthError(res);
-  }
-
-  const token = extractBearerToken(authorization);
-  let payload;
-
+const authMiddleware = (req, res, next) => {
   try {
-    payload = jwt.verify(token, process.env.JWT_SECRET);
-  } catch (err) {
-    return handleAuthError(err, res);
-  }
+    const { authorization } = req.headers.authorization;
+    if (!authorization || !authorization.startsWith("Bearer ")) {
+      return res.status(UNAUTHORIZED).send({ message: "Authorization required" });
+    }
 
-  req.user = payload;
-  next();
-}
+    const token = authorization.replace("Bearer ", "");
+    const payload = jwt.verify(token, JWT_SECRET);
+
+    req.user = payload;
+    return next();
+  } catch (err) {
+    return res.status(UNAUTHORIZED).send({ message: "Authorization required" });
+  }
+};
+
+  module.exports = authMiddleware;
+
