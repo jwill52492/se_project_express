@@ -42,9 +42,6 @@ const getUsers = (req, res) => {
     });
 }
 
-const login = (req, res) => {
-
-}
 
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
