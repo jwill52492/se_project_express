@@ -4,8 +4,6 @@ const { JWT_SECRET } = require('../utils/config');
 const User = require('../models/user');
 const { OK, CREATED, BAD_REQUEST, NOT_FOUND, INTERNAL_SERVER_ERROR, CONFLICT, UNAUTHORIZED } = require('../utils/errors');
 
-
-
 const login = (req, res) => {
   const { email, password } = req.body;
 
