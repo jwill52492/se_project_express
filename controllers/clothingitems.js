@@ -27,10 +27,10 @@ const createClothingItems = (req, res) => {
 }
 
 const deleteClothingItems = (req, res) => {
-  const owner = req.user._id;
   const { itemId } = req.params;
 
-  ClothingItems.findByIdAndDelete(itemId)
+  ClothingItems.findById(itemId)
+    .orFail()
     .then((item) => {
       if (String(item.owner) !== req.user._id) {
         return res.status(FORBIDDEN).send({ message: "You cannot delete this item" });
