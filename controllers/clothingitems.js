@@ -32,18 +32,18 @@ const deleteClothingItems = (req, res) => {
 
   ClothingItems.findByIdAndDelete(itemId)
     .then((item) => {
-      if (!owner) {
+      if (String(item.owner) !== req.user._id) {
         return res.status(FORBIDDEN).send({ message: "You cannot delete this item" });
       }
-      if (!item) {
-        return res.status(NOT_FOUND).send({ message: "Item not found" });
-      }
-      return res.status(OK).send({ message: "Success" });
+      return res.status(OK).send({ message: "Successfully deleted" });
     })
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
+      }
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(NOT_FOUND).send({ message: err.message });
       }
       return res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
     });

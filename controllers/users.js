@@ -7,21 +7,7 @@ const { OK, CREATED, BAD_REQUEST, NOT_FOUND, INTERNAL_SERVER_ERROR, CONFLICT, UN
 const login = (req, res) => {
   const { email, password } = req.body;
 
-  User.findUserByCredentials({ email }).select("+password")
-    .then((user) => {
-      if (!user) {
-        return res.status(UNAUTHORIZED).send({ message: "Unauthorized email or password" });
-      }
-      return bcrypt.compare(password, user.password);
-    })
-    .then((user) => {
-      if (!user) {
-        return res.status(UNAUTHORIZED).send({ message: "Unauthorized email or password" });
-      }
-      const userCopy = user.toObject();
-      delete userCopy.password;
-      return res.status(OK).send({ userCopy });
-    })
+  User.findUserByCredentials({ email, password })
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
@@ -30,13 +16,7 @@ const login = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
-      }
-      if (err.code === 11000) {
-        return res.status(CONFLICT).send({ message: "User with this email already exists" });
-      }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: "An error has occurred on the server" });
+      return res.status(UNAUTHORIZED).send({ message: "Incorrect email or password" });
     });
 }
 
@@ -63,8 +43,6 @@ const createUser = (req, res) => {
         return res.status(CONFLICT).send({ message: "User with this email already exists" });
       } if (err.name === "ValidationError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
-      } if (err.code === CONFLICT) {
-        return res.status(CONFLICT).send({ message: err.message });
       }
       return res.status(INTERNAL_SERVER_ERROR).send({ message: "An error has occurred on the server" });
   });
@@ -92,7 +70,7 @@ const getCurrentUser = (req, res) => {
 const updateUser = (req, res) => {
   const { name, avatar } = req.body;
 
-  User.findByIdAndUpdate({ name, avatar }, { new: true, runValidators: true })
+  User.findByIdAndUpdate(req.user._id, { name, avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         return res.status(NOT_FOUND).send({ message: "User not found" });
