@@ -35,7 +35,9 @@ const deleteClothingItems = (req, res) => {
       if (String(item.owner) !== req.user._id) {
         return res.status(FORBIDDEN).send({ message: "You cannot delete this item" });
       }
-      return res.status(OK).send({ message: "Successfully deleted" });
+      return item.deleteOne()
+        .then(() =>
+          res.status(OK).send({ message: "Successfully deleted" }));
     })
     .catch((err) => {
       console.error(err);
