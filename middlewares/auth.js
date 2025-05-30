@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET} = require("../utils/config");
 
-const UNAUTHORIZED = require("../utils/errors");
+const { UNAUTHORIZED } = require("../utils/errors");
 
 const authMiddleware = (req, res, next) => {
   try {
@@ -19,6 +19,7 @@ const authMiddleware = (req, res, next) => {
     return res.status(UNAUTHORIZED).send({ message: "Authorization required" });
   }
 };
+
 
   module.exports = authMiddleware;
 

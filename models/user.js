@@ -6,16 +6,16 @@ const bcrypt = require("bcryptjs");
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
-    minlength: 2,
-    maxlength: 30
+    required: [true, 'Name is required'],
+    minlength: [2, 'Name must be at least 2 characters'],
+    maxlength: [30, 'Name must be at most 30 characters'],
   },
   avatar: {
     type: String,
     required: [true, "The avatar field is required." ],
     validate: {
       validator(value) {
-        return validator.isURL(value);
+        return validator.isURL(value, { protocols: ['http','https'], require_protocol: true });
       },
       message: 'You must enter a valid URL',
     }
