@@ -4,6 +4,7 @@ const { INTERNAL_SERVER_ERROR, OK, CREATED, BAD_REQUEST, NOT_FOUND, FORBIDDEN } 
 
 const getClothingItems = (req, res) => {
   ClothingItems.find()
+    .sort({ createdAt: -1 })
     .then((items) => res.status(OK).send(items))
     .catch((err) => {
       console.error(err);
