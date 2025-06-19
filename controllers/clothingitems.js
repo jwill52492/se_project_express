@@ -17,7 +17,7 @@ const createClothingItems = (req, res) => {
   const owner = req.user._id;
 
   ClothingItems.create({ name, weather, imageUrl, owner, createdAt: Date.now() })
-    .then((item) => res.status(CREATED).send(item))
+    .then((card) => res.status(CREATED).send(card))
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
