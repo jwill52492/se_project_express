@@ -4,9 +4,12 @@ const userRouter = require('./users');
 const itemsRouter = require('./clothingitems');
 const { NOT_FOUND } = require('../utils/errors');
 const { createUser, login } = require('../controllers/users');
+const { validateCardBody } = require('../middleware/validation');
+const { createClothingItems } = require('../controllers/clothingitems');
 
 router.post("/signin", login);
 router.post("/signup", createUser);
+router.post("/items", validateCardBody, createClothingItems);
 router.use("/users", userRouter);
 router.use("/items", itemsRouter);
 router.use((req, res) =>
