@@ -3,7 +3,7 @@ const { celebrate, Joi } = require('celebrate');
 const validator = require('validator');
 const userRouter = require('./users');
 const itemsRouter = require('./clothingitems');
-const { NOT_FOUND } = require('../utils/errors');
+const NotFoundError = require('../errors/not-found-err');
 const { createUser, login } = require('../controllers/users');
 
 const validateURL = (value, helpers) => {
@@ -14,7 +14,7 @@ const validateURL = (value, helpers) => {
 };
 const validateCreateUser = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
+    name: Joi.string().required().min(2).max(30),
     avatar: Joi.string().required().custom(validateURL),
     email: Joi.string().required().email(),
     password: Joi.string().required(),
@@ -33,10 +33,8 @@ router.post("/signup",validateCreateUser, createUser);
 router.use("/users", userRouter);
 router.use("/items", itemsRouter);
 
-router.use((req, res, next) => {
-  const err = new Error("User or Item not found");
-  err.status = NOT_FOUND;
-  next(err);
-});
+router.use((req, res, next) =>
+  next(new NotFoundError("User or Item not found"))
+);
 
 module.exports = router;

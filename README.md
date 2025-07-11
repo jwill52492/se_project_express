@@ -10,5 +10,5 @@ Before committing your code, make sure you edit the file `sprint.txt` in the roo
 
 ## Domain Name
 The application is launched and deployed at 
-  Frontend : https://www.baselinux.net
-  Backend API : https://api.baselinux.net
+  Frontend : https://www.wtwr.baselinux.net
+  Backend API : https://api.wtwr.baselinux.net
