@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET} = require("../utils/config");
+const { UnauthorizedError } = require("../errors/unauthorized-err");
 
 const { UNAUTHORIZED } = require("../utils/errors");
 
@@ -7,7 +8,7 @@ const authMiddleware = (req, res, next) => {
   try {
     const { authorization } = req.headers;
     if (!authorization || !authorization.startsWith("Bearer ")) {
-      return res.status(UNAUTHORIZED).send({ message: "Authorization required" });
+      throw new UNAUTHORIZED("Authorization required");
     }
 
     const token = authorization.replace("Bearer ", "");
@@ -16,7 +17,10 @@ const authMiddleware = (req, res, next) => {
     req.user = payload;
     return next();
   } catch (err) {
-    return res.status(UNAUTHORIZED).send({ message: "Authorization required" });
+    if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError' || err instanceof UnauthorizedError) {
+      return next(new UNAUTHORIZED('Authorization required'));
+    }
+    return next(err);
   }
 };
 

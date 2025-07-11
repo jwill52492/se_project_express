@@ -1,4 +1,4 @@
-const { celebrate, Joi, errors, Segments } = require('celebrate');
+const { celebrate, Joi } = require('celebrate');
 const validator = require('validator');
 
 const validateURL = (value, helpers) => {
@@ -18,6 +18,9 @@ module.exports.validateCardBody = celebrate({
     imageUrl: Joi.string().required().custom(validateURL).messages({
       "string.empty": 'The "imageUrl" field cannot be empty',
       "string.uri": 'The "imageUrl" field must be a valid URL',
+    }),
+    weather: Joi.string().required().valid('hot', 'cold', 'warm').messages({
+      "string.empty": 'The "weather" field cannot be empty',
     }),
   }),
 });
@@ -40,7 +43,7 @@ module.exports.validateAuthentication = celebrate({
 
 module.exports.validateId = celebrate({
   params: Joi.object().keys({
-    id: Joi.string().alphanum().length(24)
+    itemId: Joi.string().alphanum().length(24).required(),
   }),
 });
 

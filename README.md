@@ -9,4 +9,6 @@ This is a back-end project to start the creating of a server for WTWR applicatio
 Before committing your code, make sure you edit the file `sprint.txt` in the root folder. The file `sprint.txt` should contain the number of the sprint you're currently working on. For ex. 12
 
 ## Domain Name
-The application is launched and deployed at https://www.wtwr.example.com
+The application is launched and deployed at 
+  Frontend : https://www.baselinux.net
+  Backend API : https://api.baselinux.net
