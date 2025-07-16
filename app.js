@@ -23,7 +23,13 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://localhost:3000',
+    'https://wtwr.baselinux.net',
+    'https://www.wtwr.baselinux.net'
+  ]
+}));
 app.use(express.json());
 
 app.use(requestLogger);
