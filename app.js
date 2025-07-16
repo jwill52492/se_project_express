@@ -27,8 +27,10 @@ app.use(cors({
   origin: [
     'http://localhost:3000',
     'https://wtwr.baselinux.net',
-    'https://www.wtwr.baselinux.net'
-  ]
+    'https://www.wtwr.baselinux.net',
+  ],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  credentials: true,
 }));
 app.use(express.json());
 
