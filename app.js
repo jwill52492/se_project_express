@@ -17,6 +17,8 @@ mongoose.connect('mongodb://127.0.0.1:27017/wtwr_db')
   })
   .catch(console.error);
 
+
+
 const allowedOrigins = [
   'http://localhost:3000',
   'https://wtwr.baselinux.net',
